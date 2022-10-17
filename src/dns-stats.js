@@ -22,9 +22,52 @@ const { NotImplementedError } = require('../extensions/index.js');
  * }
  *
  */
-function getDNSStats(/* domains */) {
-  throw new NotImplementedError('Not implemented');
-  // remove line with error and write your code here
+function getDNSStats(domains) {
+  if (!domains.length) {
+    return {};
+  }
+
+  // let domainsProprerties = domains.map(function(item) {
+  //     let arr = item.split('.');
+  //     let setProperties = {};
+  //     let deepOfArr = arr.length;
+  //     if (deepOfArr === 3) {
+  //         setProperties[`.${arr[2]}`] = 1;
+  //         setProperties[`${arr[2]}.${arr[1]}`] = 1;
+  //         setProperties[`${arr[2]}.${arr[1]}.${arr[0]}`] = 1;
+  //     } else  { // if (deepOfArr === 2)
+  //         setProperties[`.${arr[2]}`] = 1;
+  //         setProperties[`${arr[1]}.${arr[0]}`] = 1;
+  //     }
+  //     return setProperties;
+  // });
+
+  let domainsProprerties = domains.map(function(item) {
+    let arr = item.split('.');
+    let setProperties = [];
+    let deepOfArr = arr.length;
+    if (deepOfArr === 3) {
+      setProperties.push(`.${arr[2]}`);
+      setProperties.push(`.${arr[2]}.${arr[1]}`);
+      setProperties.push(`.${arr[2]}.${arr[1]}.${arr[0]}`);
+    } else  { // if (deepOfArr === 2)
+      setProperties.push(`.${arr[1]}`);
+      setProperties.push(`.${arr[1]}.${arr[0]}`);
+    }
+    return setProperties;
+  });
+
+  let commonArray = [];
+  for (let i = 0; i < domainsProprerties.length; i++) {
+    commonArray = [...commonArray, ...domainsProprerties[i]];
+  }
+
+  let result = {};
+  for (let j = 0; j < commonArray.length; j++) {
+    result[commonArray[j]] ? (result[commonArray[j]]++) : (result[commonArray[j]]= 1) ;
+  }
+
+  return result;
 }
 
 module.exports = {
